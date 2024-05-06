@@ -1,0 +1,18 @@
+[package]
+version = "0.1.0"
+name = "regmock-rs-example"
+edition = "2021"
+authors = ["Andreas Wallner"]
+description = "Example for different usage scenarios for regmock"
+license = "MIT"
+
+[lib]
+name = "regmock_examples"
+
+[dependencies]
+regmock-rs = { path = ".." }
+test-pac = { path = "../test-pac", features = ["all"] }
+
+[dev-dependencies.test-pac]
+path = "../test-pac"
+features = ["all", "tracing"]
