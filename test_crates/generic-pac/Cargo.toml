@@ -1,0 +1,24 @@
+# Test license
+#  
+[package]
+name = "generic-pac"
+version = "0.0.1"
+authors = ["Infineon developers"]
+edition = "2021"
+rust-version = "1.64"
+description = "Description tests"
+keywords = ["no_std", "infineon"]
+categories = ["embedded", "no-std"]
+license-file = "LICENSE.txt"
+
+[lib]
+test = false
+bench = false
+[dependencies]
+phf = { version = "0.11", features = ["macros"], optional = true }
+
+[features]
+timer = []
+uart = []
+all = ["timer","uart",]
+tracing = ["dep:phf"]
