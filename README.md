@@ -2,6 +2,9 @@
 
 > Mock registers of embedded targets on host machines in Rust 🦀.
 
+> [!CAUTION]
+> This crate is WIP and all APIs are subject to change.
+
 Made for PACs generated with [svd2pac](https://github.com/Infineon/svd2pac).
 
 ## Features ⚙️
