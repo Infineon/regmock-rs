@@ -55,3 +55,83 @@ fn debug_formatting() {
     println!("{:x?}", w);
     println!("{:X?}", w);
 }
+
+macro_rules! symmetric_assert_eq {
+    ($left:expr, $right:expr) => {
+        assert_eq!($left, $right);
+        assert_eq!($right, $left);
+    };
+}
+
+macro_rules! symmetric_assert_ne {
+    ($left:expr, $right:expr) => {
+        assert_ne!($left, $right);
+        assert_ne!($right, $left);
+    };
+}
+
+#[test]
+fn partial_equality() {
+    let access = RegisterAccess::new(RegisterAccessType::READ, 0x1234, 4, 0, 1);
+    let mut builder = RegisterAccessBuilder::default();
+    builder
+        .ty(RegisterAccessType::READ)
+        .addr(0x1234usize)
+        .len(4usize)
+        .before(0u64)
+        .after(1u64);
+
+    symmetric_assert_eq!(access, access);
+
+    symmetric_assert_eq!(
+        access,
+        RegisterAccessBuilder::default()
+            .ty(RegisterAccessType::READ)
+            .build()
+            .unwrap()
+    );
+    symmetric_assert_ne!(
+        access,
+        builder
+            .clone()
+            .ty(RegisterAccessType::WRITE)
+            .build()
+            .unwrap()
+    );
+
+    symmetric_assert_eq!(
+        access,
+        RegisterAccessBuilder::default()
+            .addr(0x1234usize)
+            .build()
+            .unwrap()
+    );
+    symmetric_assert_ne!(access, builder.clone().addr(0x4321usize).build().unwrap());
+
+    symmetric_assert_eq!(
+        access,
+        RegisterAccessBuilder::default()
+            .len(4usize)
+            .build()
+            .unwrap()
+    );
+    symmetric_assert_ne!(access, builder.clone().len(8usize).build().unwrap());
+
+    symmetric_assert_eq!(
+        access,
+        RegisterAccessBuilder::default()
+            .before(0u64)
+            .build()
+            .unwrap()
+    );
+    symmetric_assert_ne!(access, builder.clone().before(1u64).build().unwrap());
+
+    symmetric_assert_eq!(
+        access,
+        RegisterAccessBuilder::default()
+            .after(1u64)
+            .build()
+            .unwrap()
+    );
+    symmetric_assert_ne!(access, builder.clone().after(0u64).build().unwrap());
+}

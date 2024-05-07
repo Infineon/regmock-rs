@@ -95,19 +95,19 @@ impl Debug for RegisterAccess {
 impl PartialEq for RegisterAccess {
     fn eq(&self, other: &Self) -> bool {
         let mut ret = true;
-        if self.ty.is_some() {
+        if self.ty.is_some() && other.ty.is_some() {
             ret = ret && self.ty.eq(&other.ty);
         }
-        if self.addr.is_some() {
+        if self.addr.is_some() && other.addr.is_some() {
             ret = ret && self.addr.eq(&other.addr);
         }
-        if self.len.is_some() {
+        if self.len.is_some() && other.len.is_some() {
             ret = ret && self.len.eq(&other.len);
         }
-        if self.before.is_some() {
+        if self.before.is_some() && other.before.is_some() {
             ret = ret && self.before.eq(&other.before);
         }
-        if self.after.is_some() {
+        if self.after.is_some() && other.after.is_some() {
             ret = ret && self.after.eq(&other.after);
         }
         ret
