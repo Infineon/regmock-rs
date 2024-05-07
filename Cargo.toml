@@ -1,10 +1,14 @@
 [package]
-version = "0.0.1"
+version = "0.1.0"
 name = "regmock-rs"
 edition = "2021"
-authors = ["Botzner Andreas (IFAT DCGR CSS DSI D SW FA SA)"]
+authors = ["Andreas Wallner", "Andreas Botzner"]
 description = "Rust implementation of regmock for pacgen PACs."
-documentation = "https://example.com"
+license = "MIT"
+keywords = ["embedded", "testing", "unittest"]
+categories = ["development-tools::testing", "embedded"]
+readme = "README.md"
+repository = "https://github.com/infineon/regmock-rs"
 
 [lib]
 name = "regmock_rs"
