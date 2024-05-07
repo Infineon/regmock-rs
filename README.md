@@ -4,26 +4,14 @@
 
 Made for PACs generated with [svd2pac](https://github.com/Infineon/svd2pac).
 
-## Depending on regmock-rs
+## Features ⚙️
 
-To integrate regmock-rs into your build you need a PAC crate and regmock-rs. You
-want to enable the `tracing` feature for test builds and keep it disabled for embedded builds.
+As of now `regmock-rs` provides the following features:
 
-```toml
-[dependencies]
-# you can for sure depend on released crates, but often you'll encounter "just a repo"
-# here we enable all peripherals to be available
-my-cpus-pac = { git = "<clone url>", rev = "<tag/revision to use>", features = ["all"] }
-
-[dev-dependencies]
-regmock-rs = { git = "https://github.com/Infineon/regmock-rs.git", rev = "<tag/revision to use>" }
-
-[dev-dependencies]
-# overwrite PAC cate features for test, we sadly need to restate url & revision
-git = "<clone url from above>"
-rev = "<rev from above>"
-features = ["all", "tracing"] # tracing is not part of all
-```
+- 📼 recording of register accesses (type, register, values before and after the access)
+- 🤡 mocking of registers on host machines
+- 🔁 register arbitrary callbacks for register accesses
+- 🤫 non-recorded register access
 
 ## How it works
 
@@ -45,15 +33,6 @@ registered with `svd2pac` PACs. The `Regmock` struct provides a way of mocking
 registers of embedded devices on non-embedded host computers. This enables
 the execution unit tests of embedded code on developer machines as well as CI pipelines.
 
-## Features ⚙️
-
-As of now `regmock-rs` provides the following features:
-
-- 📼 recording of register accesses (type, register, values before and after the access)
-- 🤡 mocking of registers on host machines
-- 🔁 register arbitrary callbacks for register accesses
-- 🤫 non-recorded register access
-
 ### Event Logging 📜
 
 This allows `regmock-rs` to record:
@@ -72,13 +51,34 @@ able to record the value before and after the register access.
 The `silent<T>(f: impl FnOnce()->T)->T` can be used to turn off logging and
 execution of possible callbacks during the execution of the passed function.
 
-```rust
+```rust,ignore
     unsafe {
         let _ =  regmock_rs::silent(|| {pac::REGISTER.bitfield().read())}};
         let _ = unsafe { pac::REGISTER.bitfield().read() };
         let logs = regmock_rs::get_logs();
         assert_eq!(logs.len(), 1);
     }
+```
+
+## Depending on regmock-rs
+
+To integrate regmock-rs into your build you need a PAC crate and regmock-rs. You
+want to enable the `tracing` feature for test builds and keep it disabled for embedded builds.
+
+```toml
+[dependencies]
+# you can for sure depend on released crates, but often you'll encounter "just a repo"
+# here we enable all peripherals to be available
+my-cpus-pac = { git = "<clone url>", rev = "<tag/revision to use>", features = ["all"] }
+
+[dev-dependencies]
+regmock-rs = { git = "https://github.com/Infineon/regmock-rs.git", rev = "<tag/revision to use>" }
+
+[dev-dependencies]
+# overwrite PAC cate features for test, we sadly need to restate url & revision
+git = "<clone url from above>"
+rev = "<rev from above>"
+features = ["all", "tracing"] # tracing is not part of all
 ```
 
 ### Assertions
