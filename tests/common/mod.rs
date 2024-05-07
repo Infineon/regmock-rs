@@ -7,11 +7,10 @@ use test_pac as pac;
 /// Initialize mock related things.
 /// - register a `Regmock` object as the thread_local mock object.
 /// - register the read_fn and write_fn with the `pac::tracing`
-pub fn init_mock(regmock: Option<Arc<Mutex<Regmock>>>) {
-    match regmock {
-        Some(regmock) => init_regmock(regmock),
-        None => init_regmock(Arc::new(Mutex::new(Regmock::default()))),
-    }
+pub fn init_mock(regmock: Option<Arc<Mutex<Regmock>>>) -> Arc<Mutex<Regmock>> {
+    let regmock = regmock.unwrap_or(Arc::new(Mutex::new(Regmock::default())));
+    init_regmock(regmock.clone());
     set_read_fn(regmock_rs::read_fn).unwrap();
     set_write_fn(regmock_rs::write_fn).unwrap();
+    regmock
 }
