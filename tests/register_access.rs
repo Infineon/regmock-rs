@@ -1,5 +1,4 @@
 use regmock_rs::utils::{RegisterAccess, RegisterAccessBuilder, RegisterAccessType};
-use serde_json;
 
 // Some simple tests regarding the JSON deserialization.
 
@@ -17,8 +16,10 @@ fn test_from_json_str() {
 #[test]
 fn test_incomplete_data_test() {
     let ra: RegisterAccess = serde_json::from_str(r#"{"type":"r"}"#).unwrap();
-    let mut ra_cmp = RegisterAccess::default();
-    ra_cmp.ty = Some(RegisterAccessType::READ);
+    let ra_cmp = RegisterAccess {
+        ty: Some(RegisterAccessType::READ),
+        ..Default::default()
+    };
     assert_eq!(ra_cmp, ra);
 }
 
