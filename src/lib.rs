@@ -195,7 +195,7 @@ pub fn write_fn(reg: usize, len: usize, value: u64) {
 /// cannot be accessed.
 #[cfg(feature = "aurix")]
 pub fn ldmst_fn(reg: usize, len: usize, value: u64) {
-    with_mock(|mock| mock.load_modify_store(reg, value)).unwrap_or_else(|e| {
+    with_mock(|mock| mock.load_modify_store(reg, len, value)).unwrap_or_else(|e| {
         panic!(
             "Cound not `load_modify_store(reg: 0x{:08X}, value: 0x{:08X})` due to: {:?}",
             reg, len, e

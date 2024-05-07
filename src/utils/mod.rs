@@ -593,12 +593,12 @@ impl Regmock {
     /// Basic impl of the LMST tracing interace for the Aurix chip.
     /// TODO: maybe add a dedicated field for callbacks for lmst register
     /// accesses.
-    fn load_modify_store(&mut self, addr: usize, val: u64) {
+    pub fn load_modify_store(&mut self, addr: usize, len: usize, val: u64) {
         let before = self.get_reg_value(addr);
         let after = self.exec_write_fn(addr, before, val);
 
-        if !self.log_disabled {
-            self.log.push(RegisterAccess::new(
+        if !self.log_enabled {
+            self.log.push_log_entry(RegisterAccess::new(
                 RegisterAccessType::WRITE,
                 addr,
                 len,
