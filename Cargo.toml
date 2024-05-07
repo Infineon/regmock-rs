@@ -24,8 +24,8 @@ serde_json = "1.0.104"
 [dev-dependencies]
 closure = "0.3.0"
 
-[dev-dependencies.generic-pac]
-path = "./test_crates/generic-pac"
+[dev-dependencies.test-pac]
+path = "./test-pac"
 features = ["all", "tracing"]
 
 [features]

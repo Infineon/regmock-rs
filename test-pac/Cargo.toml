@@ -1,0 +1,40 @@
+# CC0 1.0 Universal
+# 
+# CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL SERVICES.
+# DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN ATTORNEY-CLIENT RELATIONSHIP. CREATIVE
+# COMMONS PROVIDES THIS INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES
+# REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER, AND
+# DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM THE USE OF THIS DOCUMENT OR THE INFORMATION
+# OR WORKS PROVIDED HEREUNDER.
+[package]
+name = "test-pac"
+version = "0.0.1"
+authors = ["Infineon developers"]
+edition = "2021"
+rust-version = "1.64"
+description = "Description tests"
+keywords = ["no_std", "infineon"]
+categories = ["embedded","hardware-support","no-std","no-std::no-alloc"]
+license-file = "LICENSE.txt"
+
+[lib]
+test = false
+bench = false
+
+
+[dependencies]
+phf = { version = "0.11", features = ["macros"], optional = true }
+
+
+
+[features]
+gpio = []
+spi = []
+timer = []
+
+all = ["gpio","spi","timer",]
+tracing = ["dep:phf"]
+tracing_dummy = []
+
+[package.metadata.docs.rs]
+features = ["all"]

@@ -87,13 +87,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
-name = "generic-pac"
-version = "0.0.1"
-dependencies = [
- "phf",
-]
-
-[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -201,11 +194,11 @@ version = "0.1.0"
 dependencies = [
  "closure",
  "derive_builder",
- "generic-pac",
  "itertools",
  "log",
  "serde",
  "serde_json",
+ "test-pac",
 ]
 
 [[package]]
@@ -277,6 +270,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "test-pac"
+version = "0.0.1"
+dependencies = [
+ "phf",
 ]
 
 [[package]]

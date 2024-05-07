@@ -1,0 +1,770 @@
+<device schemaVersion="1.3" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+    xs:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ARM-software/CMSIS_4/master/CMSIS/Utilities/CMSIS-SVD.xsd">
+    <vendor>Infineon</vendor>
+    <vendorID>IFX</vendorID>
+    <name>test</name>
+    <series>RISCV</series>
+    <version>0.1</version>
+    <description>Example for regmock test and demonstration purposes</description>
+    <licenseText>CC0 1.0 Universal
+
+CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL SERVICES.
+DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN ATTORNEY-CLIENT RELATIONSHIP. CREATIVE
+COMMONS PROVIDES THIS INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES
+REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER, AND
+DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM THE USE OF THIS DOCUMENT OR THE INFORMATION
+OR WORKS PROVIDED HEREUNDER.</licenseText>
+    <headerSystemFilename>chip</headerSystemFilename>
+    <addressUnitBits>32</addressUnitBits>
+    <width>32</width>
+    <size>32</size>
+    <access>read-write</access>
+    <resetValue>0</resetValue>
+    <resetMask>0xffffffff</resetMask>
+    <peripherals>
+
+        <peripheral>
+            <name>timer</name>
+            <version>0.1</version>
+            <description>Timer Peripheral</description>
+            <baseAddress>0x8000</baseAddress>
+            <addressBlock>
+                <offset>0x0</offset>
+                <size>0x18</size>
+                <usage>registers</usage>
+                <protection>s</protection>
+            </addressBlock>
+            <interrupt>
+                <name>timer0</name>
+                <value>0</value>
+            </interrupt>
+            <interrupt>
+                <name>timer1</name>
+                <value>1</value>
+            </interrupt>
+            <registers>
+                <cluster>
+                    <dim>2</dim>
+                    <dimIncrement>0xc</dimIncrement>
+                    <name>timercluster%s</name>
+                    <addressOffset>0</addressOffset>
+
+                    <register>
+                        <name>ctrlstat</name>
+                        <addressOffset>0x0</addressOffset>
+                        <access>read-write</access>
+                        <resetValue>0x00000000</resetValue>
+                        <resetMask>0x000000ff</resetMask>
+                        <fields>
+                            <field>
+                                <name>enable</name>
+                                <description>Enable Timer / Counter</description>
+                                <bitOffset>0</bitOffset>
+                                <bitWidth>1</bitWidth>
+                                <access>read-write</access>
+                            </field>
+                            <field>
+                                <name>reset_in</name>
+                                <description>Asynchronous signals get synchronized with the
+                                    Timer/Counter clock</description>
+                                <bitOffset>1</bitOffset>
+                                <bitWidth>3</bitWidth>
+                                <access>read-write</access>
+                            </field>
+                            <field>
+                                <name>clock</name>
+                                <description>Select external clock source</description>
+                                <bitOffset>4</bitOffset>
+                                <bitWidth>3</bitWidth>
+                                <access>read-write</access>
+                            </field>
+                            <field>
+                                <name>underflow_irq</name>
+                                <description>If set, an interrupt will be triggered if an underflow
+                                    occurs</description>
+                                <bitOffset>7</bitOffset>
+                                <bitWidth>1</bitWidth>
+                                <access>read-write</access>
+                            </field>
+                        </fields>
+                    </register>
+                    <register>
+                        <name>count</name>
+                        <addressOffset>0x4</addressOffset>
+                        <access>read-write</access>
+                        <resetValue>0x00000000</resetValue>
+                        <resetMask>0xffffffff</resetMask>
+                        <fields>
+                            <field>
+                                <name>value</name>
+                                <description>The count register stores the actual counter value</description>
+                                <bitOffset>0</bitOffset>
+                                <bitWidth>32</bitWidth>
+                                <access>read-write</access>
+                            </field>
+                        </fields>
+                    </register>
+                    <register>
+                        <name>max</name>
+                        <addressOffset>0x8</addressOffset>
+                        <access>read-write</access>
+                        <resetValue>0x00000000</resetValue>
+                        <resetMask>0xffffffff</resetMask>
+                        <fields>
+                            <field>
+                                <name>value</name>
+                                <description>The max register contains the maximal value of the
+                                    counter (count). On a Timer/Counter reset this value is copied
+                                    into count.</description>
+                                <bitOffset>0</bitOffset>
+                                <bitWidth>32</bitWidth>
+                                <access>read-write</access>
+                            </field>
+                        </fields>
+                    </register>
+
+
+                </cluster>
+            </registers>
+        </peripheral>
+
+        <peripheral>
+            <name>gpio</name>
+            <version>0.1</version>
+            <description>GPIO</description>
+            <baseAddress>0x8400</baseAddress>
+            <addressBlock>
+                <offset>0x0</offset>
+                <size>0x34</size>
+                <usage>registers</usage>
+                <protection>s</protection>
+            </addressBlock>
+            <registers>
+                <register>
+                    <name>in</name>
+                    <addressOffset>0x20</addressOffset>
+                    <access>read-only</access>
+                    <resetValue>0x00000000</resetValue>
+                    <resetMask>0x00000fff</resetMask>
+                    <fields>
+                        <field>
+                            <name>gpio0</name>
+                            <description>Level of GPIO0</description>
+                            <bitOffset>0</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio1</name>
+                            <description>Level of GPIO1</description>
+                            <bitOffset>1</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio2</name>
+                            <description>Level of GPIO2</description>
+                            <bitOffset>2</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio3</name>
+                            <description>Level of GPIO3</description>
+                            <bitOffset>3</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio4</name>
+                            <description>Level of GPIO4</description>
+                            <bitOffset>4</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio5</name>
+                            <description>Level of GPIO5</description>
+                            <bitOffset>5</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio6</name>
+                            <description>Level of GPIO6</description>
+                            <bitOffset>6</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio7</name>
+                            <description>Level of GPIO7</description>
+                            <bitOffset>7</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio8</name>
+                            <description>Level of GPIO8</description>
+                            <bitOffset>8</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio9</name>
+                            <description>Level of GPIO9</description>
+                            <bitOffset>9</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio10</name>
+                            <description>Level of GPIO10</description>
+                            <bitOffset>10</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>gpio11</name>
+                            <description>Level of GPIO11</description>
+                            <bitOffset>11</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                    </fields>
+                </register>
+                <register>
+                    <name>we</name>
+                    <addressOffset>0x24</addressOffset>
+                    <access>read-write</access>
+                    <resetValue>0x00000000</resetValue>
+                    <resetMask>0x00000fff</resetMask>
+                    <fields>
+                        <field>
+                            <name>gpio0</name>
+                            <description>Direction of GPIO0</description>
+                            <bitOffset>0</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio1</name>
+                            <description>Direction of GPIO1</description>
+                            <bitOffset>1</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio2</name>
+                            <description>Direction of GPIO2</description>
+                            <bitOffset>2</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio3</name>
+                            <description>Direction of GPIO3</description>
+                            <bitOffset>3</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio4</name>
+                            <description>Direction of GPIO4</description>
+                            <bitOffset>4</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio5</name>
+                            <description>Direction of GPIO5</description>
+                            <bitOffset>5</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio6</name>
+                            <description>Direction of GPIO6</description>
+                            <bitOffset>6</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio7</name>
+                            <description>Direction of GPIO7</description>
+                            <bitOffset>7</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio8</name>
+                            <description>Direction of GPIO8</description>
+                            <bitOffset>8</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio9</name>
+                            <description>Direction of GPIO9</description>
+                            <bitOffset>9</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio10</name>
+                            <description>Direction of GPIO10</description>
+                            <bitOffset>10</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>gpio11</name>
+                            <description>Direction of GPIO11</description>
+                            <bitOffset>11</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <useEnumeratedValues>true</useEnumeratedValues>
+                            </writeConstraint>
+                            <enumeratedValues>
+                                <enumeratedValue>
+                                    <name>in</name>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>out</name>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                    </fields>
+                </register>
+                <register>
+                    <name>out</name>
+                    <addressOffset>0x2c</addressOffset>
+                    <access>read-write</access>
+                    <resetValue>0x00000000</resetValue>
+                    <resetMask>0x00000fff</resetMask>
+                    <fields>
+                        <field>
+                            <name>gpio0</name>
+                            <description>Level to drive on GPIO0 if selected and enabled</description>
+                            <bitOffset>0</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio1</name>
+                            <description>Level to drive on GPIO1 if selected and enabled</description>
+                            <bitOffset>1</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio2</name>
+                            <description>Level to drive on GPIO2 if selected and enabled</description>
+                            <bitOffset>2</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio3</name>
+                            <description>Level to drive on GPIO3 if selected and enabled</description>
+                            <bitOffset>3</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio4</name>
+                            <description>Level to drive on GPIO4 if selected and enabled</description>
+                            <bitOffset>4</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio5</name>
+                            <description>Level to drive on GPIO5 if selected and enabled</description>
+                            <bitOffset>5</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio6</name>
+                            <description>Level to drive on GPIO6 if selected and enabled</description>
+                            <bitOffset>6</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio7</name>
+                            <description>Level to drive on GPIO7 if selected and enabled</description>
+                            <bitOffset>7</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio8</name>
+                            <description>Level to drive on GPIO8 if selected and enabled</description>
+                            <bitOffset>8</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio9</name>
+                            <description>Level to drive on GPIO9 if selected and enabled</description>
+                            <bitOffset>9</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio10</name>
+                            <description>Level to drive on GPIO10 if selected and enabled</description>
+                            <bitOffset>10</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>gpio11</name>
+                            <description>Level to drive on GPIO11 if selected and enabled</description>
+                            <bitOffset>11</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                    </fields>
+                </register>
+            </registers>
+        </peripheral>
+
+        <peripheral>
+            <name>spi</name>
+            <version>0.1</version>
+            <description>SPI Slave peripheral</description>
+            <baseAddress>0x08200</baseAddress>
+            <addressBlock>
+                <offset>0x0</offset>
+                <size>0x10</size>
+                <usage>registers</usage>
+                <protection>s</protection>
+            </addressBlock>
+            <registers>
+                <register>
+                    <name>status</name>
+                    <description>Status register</description>
+                    <addressOffset>0x0</addressOffset>
+                    <resetValue>0x00000000</resetValue>
+                    <resetMask>0x00000000</resetMask>
+                    <fields>
+                        <field>
+                            <name>busy</name>
+                            <description>A byte is being transmitted</description>
+                            <bitOffset>0</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>selected</name>
+                            <description>The device is selected via CS</description>
+                            <bitOffset>1</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>rxe</name>
+                            <description>The RX FIFO is empty</description>
+                            <bitOffset>2</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>rxnf</name>
+                            <description>The RX FIFO is not full</description>
+                            <bitOffset>3</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>rxovfl</name>
+                            <description>The RX FIFO overflowed since the last clear</description>
+                            <bitOffset>4</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>txf</name>
+                            <description>The TX FIFO is full</description>
+                            <bitOffset>5</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>txne</name>
+                            <description>The TX FIFO is not empty</description>
+                            <bitOffset>6</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>rx_fill</name>
+                            <description>Number of bytes to be read from the RX FIFO</description>
+                            <bitOffset>16</bitOffset>
+                            <bitWidth>4</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>tx_fill</name>
+                            <description>Number of bytes to be sent from the TX FIFO</description>
+                            <bitOffset>24</bitOffset>
+                            <bitWidth>4</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                        <field>
+                            <name>clear_rxovfl</name>
+                            <description>Write 1 to clear the rxovfl bit</description>
+                            <bitOffset>30</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>write-only</access>
+                            <modifiedWriteValues>oneToClear</modifiedWriteValues>
+                        </field>
+                        <field>
+                            <name>flush</name>
+                            <description>Write 1 to empty TX and RX FIFO</description>
+                            <bitOffset>31</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>write-only</access>
+                            <modifiedWriteValues>oneToClear</modifiedWriteValues>
+                        </field>
+                    </fields>
+                </register>
+                <register>
+                    <name>ctrl</name>
+                    <description>Control register</description>
+                    <addressOffset>0x4</addressOffset>
+                    <resetValue>0x00000000</resetValue>
+                    <resetMask>0x00000007</resetMask>
+                    <fields>
+                        <field>
+                            <name>en</name>
+                            <description>Global module enable</description>
+                            <bitOffset>0</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                        <field>
+                            <name>cpha</name>
+                            <description>0 to latch on first edge, 1 to shift</description>
+                            <bitOffset>1</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                            <enumeratedValues>
+                                <name>cpha</name>
+                                <enumeratedValue>
+                                    <name>firstLatches</name>
+                                    <description>The first edge of the clock latches data, first bit
+                                        is driven from CS</description>
+                                    <value>0</value>
+                                </enumeratedValue>
+                                <enumeratedValue>
+                                    <name>firstShifts</name>
+                                    <description>The first edge shifts data, CS assertion does not
+                                        change data output</description>
+                                    <value>1</value>
+                                </enumeratedValue>
+                            </enumeratedValues>
+                        </field>
+                        <field>
+                            <name>cpol</name>
+                            <description>Clock idle polarity</description>
+                            <bitOffset>2</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-write</access>
+                        </field>
+                    </fields>
+                </register>
+                <register>
+                    <name>tx</name>
+                    <description>Transmit FIFO</description>
+                    <addressOffset>0x8</addressOffset>
+                    <resetValue>0x00000000</resetValue>
+                    <resetMask>0x00000000</resetMask>
+                    <fields>
+                        <field>
+                            <name>data</name>
+                            <description>Write to TX FIFO</description>
+                            <bitOffset>0</bitOffset>
+                            <bitWidth>8</bitWidth>
+                            <access>write-only</access>
+                        </field>
+                    </fields>
+                </register>
+                <register>
+                    <name>rx</name>
+                    <description>Receive FIFO</description>
+                    <addressOffset>0xc</addressOffset>
+                    <resetValue>0x00000000</resetValue>
+                    <resetMask>0x00000000</resetMask>
+                    <fields>
+                        <field>
+                            <name>data</name>
+                            <description>Read data from RX FIFO</description>
+                            <bitOffset>0</bitOffset>
+                            <bitWidth>8</bitWidth>
+                            <access>read-only</access>
+                            <readAction>modifyExternal</readAction>
+                        </field>
+                        <field>
+                            <name>valid</name>
+                            <description>A byte was available when the read occured</description>
+                            <bitOffset>31</bitOffset>
+                            <bitWidth>1</bitWidth>
+                            <access>read-only</access>
+                        </field>
+                    </fields>
+                </register>
+            </registers>
+        </peripheral>
+
+    </peripherals>
+</device>
