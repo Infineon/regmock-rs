@@ -151,7 +151,7 @@ pub mod access_gen {
             ty: Some(READ),
             addr: Some(address),
             len: None,
-            before: Some(value),
+            before: None,
             after: Some(value),
         }
     }
