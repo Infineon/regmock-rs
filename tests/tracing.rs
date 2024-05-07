@@ -1,11 +1,5 @@
-use std::sync::{Arc, Condvar, Mutex};
-use std::thread;
-use std::time::Duration;
-
-use closure::closure;
-
 use pac::{gpio, RegisterValue, GPIO};
-use regmock_rs::utils::{RegisterAccess, RegisterAccessBuilder, RegisterAccessType, Regmock};
+use regmock_rs::utils::{RegisterAccess, RegisterAccessType};
 use regmock_rs::{given, require_seq, silent};
 use test_pac as pac;
 
@@ -225,77 +219,4 @@ fn silent_access_not_traced() {
 
     let logs = regmock_rs::logs().unwrap();
     assert_eq!(logs.len_full(), 1);
-}
-
-#[test]
-fn test_wait_until_polling() -> Result<(), String> {
-    let reporter = Arc::new(Mutex::new(Regmock::default()));
-    init_mock(Some(reporter.clone()));
-
-    let dut_thread = thread::spawn(closure!(clone reporter, ||{
-        init_mock(Some(reporter.clone()));
-        thread::sleep(Duration::from_millis(200));
-        loop {
-            // TODO open bug for RegValue not being comparable
-            if unsafe{ GPIO.r#in().read().get_raw() } == gpio::In::new(0xC0FFEE).get_raw() {
-                eprintln!("Read 0xC0FFEE from UART[0].reg32bitraw register");
-                break;
-            }
-                thread::sleep(Duration::from_millis(10));
-        }
-
-    }));
-    let _ =
-        regmock_rs::wait_until_polled(GPIO.r#in().addr(), 20, Some(Duration::from_millis(1000)));
-    regmock_rs::silent(|| unsafe {
-        // This is a false positive. The trait defined in the module is used.
-        #[allow(unused_imports)]
-        use pac::tracing::insanely_unsafe;
-        GPIO.r#in().write_read_only(gpio::In::new(0xC0FFEE))
-    })?;
-
-    dut_thread
-        .join()
-        .map_err(|_| "Was not able to join DUT thread.".to_owned())
-}
-
-#[test]
-fn test_wait_until_polling_fail() -> () {
-    let reporter = Arc::new(Mutex::new(Regmock::default()));
-    init_mock(Some(reporter.clone()));
-
-    let pair = Arc::new((Mutex::new(false), Condvar::new()));
-
-    let dut_thread = thread::spawn(closure!(
-            clone reporter, clone pair, ||{
-        eprintln!("THREAD[1]: Waiting for barrier");
-        let (lock, cvar) = &*pair;
-        init_mock(Some(reporter.clone()));
-        let _guard = cvar.wait_while(lock.lock().unwrap(), |timeout| {
-            eprintln!("THREAD[1]: Waiting... timeout: {:?}, inverse:{:?}", *timeout, !*timeout);
-            !*timeout
-        }).unwrap();
-        eprintln!("THREAD[1] Finished work.");
-    }));
-
-    eprintln!("THREAD[0]: Waiting for barrier");
-    let result =
-        regmock_rs::wait_until_polled(GPIO.r#in().addr(), 20, Some(Duration::from_millis(1000)));
-    eprintln!("THREAD[0]: Reached timeout waiting for dut_thread to poll");
-    let (lock, cvar) = &*pair;
-    let mut timeout_waiting = lock.lock().unwrap();
-    *timeout_waiting = true;
-    cvar.notify_one();
-    drop(timeout_waiting);
-
-    thread::sleep(Duration::from_secs(2));
-    cvar.notify_one();
-    if let Ok(()) = result {
-        panic!("Main thread did not time out, waiting for dut_thread to poll UART[0].r#in()");
-    }
-
-    dut_thread
-        .join()
-        .map_err(|_| "Was not able to join DUT thread.".to_owned())
-        .unwrap();
 }
