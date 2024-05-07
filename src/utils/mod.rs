@@ -32,14 +32,19 @@ pub enum RegisterAccessType {
 pub struct RegisterAccess {
     /// Type of the register access.
     #[serde(alias = "type")]
+    #[builder(setter(into, strip_option))]
     pub ty: Option<RegisterAccessType>,
     /// Address of accessed register.
+    #[builder(setter(into, strip_option))]
     pub addr: Option<usize>,
     /// Length of the access mask in bytes.
+    #[builder(setter(into, strip_option))]
     pub len: Option<usize>,
     /// Value of the register before the access.
+    #[builder(setter(into, strip_option))]
     pub before: Option<u64>,
     /// Value of the register after the access.
+    #[builder(setter(into, strip_option))]
     pub after: Option<u64>,
 }
 

@@ -32,10 +32,8 @@ impl MatchError {
 /// Alternatively matcher can be applied by calling [`match()`](#tymethod.match) with a list
 /// of register accesses.
 ///
-/// # Examples
-/// ```rust,ignore
-/// let logs = regmock_rs::get_logs().iter();
-/// todo!("implement this example")
+/// For an example of how to implement this trait see one of the existing matchers.
+/// (i.e. [`WrittenSequenceMatcher`])
 /// ```
 pub trait LogMatcher<'log, T: IntoIterator<Item = &'log RegisterAccess>> {
     /// Consumes and matches `self` against some sequence of [`RegisterAccess`]'s.
