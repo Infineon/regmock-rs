@@ -7,7 +7,7 @@ use crate::utils::Regmock;
 thread_local! {
     /// Global Regmock object used by `read_fn`,`write_fn` and `ldmst_fn`
     /// to mock registers and chip behavior.
-    pub(crate) static  MOCK: ThreadLocalRegmock= OnceLock::new();
+    pub(crate) static  MOCK: ThreadLocalRegmock= const {OnceLock::new()};
 }
 
 type ThreadLocalRegmock = OnceLock<Arc<Mutex<Regmock>>>;
@@ -20,6 +20,7 @@ pub enum MockError {
     /// could not acquire lock to [`Regmock`] object.
     LockError,
 }
+
 impl From<MockError> for String {
     fn from(value: MockError) -> Self {
         format!("failed due to: {:?}", value)
@@ -34,7 +35,7 @@ where
     MOCK.with(|mock| -> Result<R, MockError> {
         let mut mock = mock
             .get()
-            .ok_or_else(|| MockError::MockNotInitialized)?
+            .ok_or(MockError::MockNotInitialized)?
             .lock()
             .map_err(|_| MockError::LockError)?;
         Ok((f)(&mut mock))
@@ -138,6 +139,7 @@ pub fn wait_until_polled(
         };
     }
 }
+
 /// Enable/disable the execution of callbacks in the `thread_local` MOCK object.
 pub fn callbacks(state: bool) -> Result<(), MockError> {
     with_mock(|mock| {
@@ -149,6 +151,7 @@ pub fn callbacks(state: bool) -> Result<(), MockError> {
 pub fn logs() -> Result<utils::RegmockLog, MockError> {
     with_mock(|mock| mock.get_logs())
 }
+
 /// Perform a read from the mocked registers.
 /// Register this function as the `READ_FN` in the `pacgen` PAC.
 ///

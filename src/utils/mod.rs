@@ -87,7 +87,6 @@ impl Debug for RegisterAccess {
 /// assert_eq!(partial, full);
 ///
 /// ```
-
 impl PartialEq for RegisterAccess {
     fn eq(&self, other: &Self) -> bool {
         let mut ret = true;
@@ -210,6 +209,7 @@ impl RegmockLog {
             }
         }
     }
+
     /// Check if specified register is currently being polled for at least `count` times.
     pub(crate) fn is_being_polled(&self, addr: usize, count: usize) -> bool {
         self.log.last().is_some_and(|last| {
@@ -458,6 +458,7 @@ pub struct Regmock {
     /// Defaults to `true`.
     pub callback_enabled: bool,
 }
+
 impl Debug for Regmock {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Regmock")
@@ -469,6 +470,7 @@ impl Debug for Regmock {
             .finish()
     }
 }
+
 impl Default for Regmock {
     /// Construct a default [`Regmock`] struct.
     fn default() -> Self {
@@ -499,9 +501,7 @@ impl Regmock {
         if !self.read_fn.contains_key(&addr) || !self.callback_enabled {
             before
         } else {
-            let cb = self.read_fn
-                .get_mut(&addr)
-                .unwrap();
+            let cb = self.read_fn.get_mut(&addr).unwrap();
             cb(&mut self.register_mocks, before)
         }
     }
@@ -512,9 +512,7 @@ impl Regmock {
         if !self.write_fn.contains_key(&addr) || !self.callback_enabled {
             val
         } else {
-            let cb = self.write_fn
-                .get_mut(&addr)
-                .unwrap();
+            let cb = self.write_fn.get_mut(&addr).unwrap();
             cb(&mut self.register_mocks, before, val)
         }
     }

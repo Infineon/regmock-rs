@@ -91,6 +91,7 @@ impl WrittenSequenceMatcher {
         }
     }
 }
+
 impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
     for WrittenSequenceMatcher
 {
@@ -161,6 +162,7 @@ pub struct WrittenBeforeMatcher {
     /// Address of the other register.
     pub other: usize,
 }
+
 impl WrittenBeforeMatcher {
     const NAME: &'static str = "WrittenBeforeMatcher";
 
@@ -168,6 +170,7 @@ impl WrittenBeforeMatcher {
         Self { target, other }
     }
 }
+
 impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
     for WrittenBeforeMatcher
 {
@@ -215,6 +218,7 @@ pub struct AllWrittenBeforeMatcher {
     /// Register written to **after** all writes to [`target`](#structfield.target)
     pub other: usize,
 }
+
 impl AllWrittenBeforeMatcher {
     const NAME: &'static str = "AllWrittenBeforeMatcher";
     /// Construct new [`AllWrittenBeforeMatcher`]
@@ -260,6 +264,7 @@ pub struct WrittenOnceMatcher {
     /// Register which must only be written once.
     pub target: usize,
 }
+
 impl WrittenOnceMatcher {
     const NAME: &'static str = "WrittenOnceMatcher";
     /// Construct new [`WrittenOnceMatcher`]
@@ -304,6 +309,7 @@ pub struct NotWrittenMatcher {
     /// Register which must not be written to.
     pub target: usize,
 }
+
 impl NotWrittenMatcher {
     const NAME: &'static str = "NotWrittenMatcher";
     /// Construct new [`NotWrittenMatcher`]
@@ -346,6 +352,7 @@ pub struct ReadLastMatcher {
     /// Register which must not be written to.
     pub target: usize,
 }
+
 impl ReadLastMatcher {
     const NAME: &'static str = "ReadLastMatcher";
     /// Construct new [`ReadLastMatcher`]
