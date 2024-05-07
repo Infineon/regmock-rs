@@ -132,7 +132,7 @@ pub mod access_gen {
     use super::RegisterAccess;
     use super::RegisterAccessType::{READ, WRITE};
 
-    /// Construct a [`RegisterAccess`] of type [`READ`](super::RegisterAccessType::READ)
+    /// Construct a [`RegisterAccess`] of type [`READ`]
     /// from a specific register.
     pub fn read(address: usize) -> RegisterAccess {
         RegisterAccess {
@@ -144,7 +144,7 @@ pub mod access_gen {
         }
     }
 
-    /// Construct a [`RegisterAccess`] of type [`READ`](super::RegisterAccessType::READ)
+    /// Construct a [`RegisterAccess`] of type [`READ`]
     /// that from a specific register with a read value.
     pub fn read_value(address: usize, value: u64) -> RegisterAccess {
         RegisterAccess {
@@ -156,7 +156,7 @@ pub mod access_gen {
         }
     }
 
-    /// Construct a [`RegisterAccess`] of type [`WRITE`](super::RegisterAccessType::WRITE)
+    /// Construct a [`RegisterAccess`] of type [`WRITE`]
     /// that from a specific register.
     pub fn write(address: usize) -> RegisterAccess {
         RegisterAccess {
@@ -168,7 +168,7 @@ pub mod access_gen {
         }
     }
 
-    /// Construct a [`RegisterAccess`] of type [`WRITE`](super::RegisterAccessType::WRITE)
+    /// Construct a [`RegisterAccess`] of type [`WRITE`]
     /// that from a specific register with a written value.
     pub fn write_value(address: usize, value: u64) -> RegisterAccess {
         RegisterAccess {
@@ -333,7 +333,7 @@ pub struct Regmock {
     /// List of [`RegisterAccess`] that happen through the PAC library.
     ///
     /// Stores tuples of [`RegisterAccess`] structs and counter for run-length-encoding.
-    /// To circumvent the logging, either use [`Regmock::silent()`].
+    /// To circumvent the logging, either use [`crate::silent()`].
     pub log: RegmockLog,
     /// Register mocks.
     ///

@@ -1,5 +1,5 @@
-//! Collection of matchers that can be run
-//! against iterators that yield [`RegisterAccess`](crate::utils::RegisterAccess).
+//! Collection of matchers that can be run against
+//! iterators that yield [`RegisterAccess`].
 
 use std::usize;
 
@@ -395,10 +395,10 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T> for
     }
 }
 
-/// Verify a sequence of [`RegisterAccess`](crate::utils::RegisterAccess)'s
+/// Verify a sequence of [`RegisterAccess`]'s
 /// happened.
 ///
-/// Will succeed if [`seq`](#structfield.seq) yields equal [`RegisterAccess`](crate::utils::RegisterAccess)'s
+/// Will succeed if [`seq`](#structfield.seq) yields equal [`RegisterAccess`]'s
 /// as the provided log iterator. Fails is the iterators are not pairwise equal.
 pub struct LogSequenceMatcher<'seq, SEQ>
 where

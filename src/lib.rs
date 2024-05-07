@@ -147,7 +147,7 @@ pub fn callbacks(state: bool) -> Result<(), MockError> {
     })
 }
 
-/// Get the [`RegmockLog`] form the `thread_local` MOCK object.
+/// Get the [`utils::RegmockLog`] form the `thread_local` MOCK object.
 pub fn logs() -> Result<utils::RegmockLog, MockError> {
     with_mock(|mock| mock.get_logs())
 }
