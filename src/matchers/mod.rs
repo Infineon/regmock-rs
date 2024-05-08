@@ -34,7 +34,6 @@ impl MatchError {
 ///
 /// For an example of how to implement this trait see one of the existing matchers.
 /// (i.e. [`WrittenSequenceMatcher`])
-/// ```
 pub trait LogMatcher<'log, T: IntoIterator<Item = &'log RegisterAccess>> {
     /// Consumes and matches `self` against some sequence of [`RegisterAccess`]'s.
     ///
