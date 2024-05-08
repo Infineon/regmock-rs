@@ -1,8 +1,10 @@
 # `regmock-rs`
 
-> Mock registers of embedded targets on host machines in Rust 🦀.
+A small library for mocking registers of embedded targets on host machines in Rust 🦀.
+It allows you to do a wide range of tests for embedded code on your host
+machine- mocking, faking or modelling the hardwares behavior.
 
-> [!CAUTION]
+> ⚠️ **WARNING** ⚠️
 > This crate is WIP and all APIs are subject to change.
 
 Made for PACs generated with [svd2pac](https://github.com/Infineon/svd2pac).
@@ -56,7 +58,7 @@ execution of possible callbacks during the execution of the passed function.
 
 ```rust,ignore
     unsafe {
-        let _ =  regmock_rs::silent(|| {pac::REGISTER.bitfield().read())}};
+        let _ =  regmock_rs::silent(|| { pac::REGISTER.bitfield().read() });
         let _ = unsafe { pac::REGISTER.bitfield().read() };
         let logs = regmock_rs::get_logs();
         assert_eq!(logs.len(), 1);
