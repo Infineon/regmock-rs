@@ -340,6 +340,7 @@ pub struct Regmock {
     /// Stores tuples of [`RegisterAccess`] structs and counter for run-length-encoding.
     /// To circumvent the logging, either use [`crate::silent()`].
     pub log: RegmockLog,
+
     /// Register mocks.
     ///
     /// ## Note:
@@ -348,6 +349,7 @@ pub struct Regmock {
     /// or write the desired initial value directly into [`register_mocks`](#register_mocks)
     /// object to have correct initial register values if absolutely needed.
     pub register_mocks: RegisterMap,
+
     /// A map from register addresses to [`ReadFunction`] that gets called
     /// every time a specific register is *read* from through the PAC.
     ///
@@ -408,8 +410,8 @@ pub struct Regmock {
     /// ```
     ///
     /// See crate level examples and tests for more.
-    ///
     pub read_fn: HashMap<usize, ReadFunction>,
+
     /// A map of register addresses to [`WriteFunction`] that get called
     /// every time a specific register is *written* to through the PAC.
     ///
@@ -455,13 +457,20 @@ pub struct Regmock {
     ///
     /// See [`Regmock::read_fn`] limitations section.
     pub write_fn: HashMap<usize, WriteFunction>,
+
     /// Controls if the register accesses get logged.
     /// Defaults to `true`.
     pub log_enabled: bool,
+
     /// Controls if the register callback functions get executed. Used
     /// by the `no_log!` macro to bypass the logging and callbacks.
     /// Defaults to `true`.
     pub callback_enabled: bool,
+
+    /// Function to resolve the address of a register to its name
+    ///
+    /// Consider using [`Regmock::get_reg_name`] which provides a simpler interface
+    pub name_resolver: Option<Box<dyn Fn(u64) -> Option<&'static &'static str> + Send>>,
 }
 
 impl Debug for Regmock {
@@ -486,11 +495,27 @@ impl Default for Regmock {
             write_fn: Default::default(),
             log_enabled: true,
             callback_enabled: true,
+            name_resolver: None,
         }
     }
 }
 
 impl Regmock {
+    pub fn with_resolver<T>(resolver: &'static T) -> Self
+    where
+        T: Fn(u64) -> Option<&'static &'static str> + Send + Sync,
+    {
+        Self {
+            log: Default::default(),
+            register_mocks: Default::default(),
+            read_fn: Default::default(),
+            write_fn: Default::default(),
+            log_enabled: true,
+            callback_enabled: true,
+            name_resolver: Some(Box::new(resolver)),
+        }
+    }
+
     fn get_reg_value(&mut self, addr: usize) -> u64 {
         let register_mocks = &mut self.register_mocks;
         if let std::collections::hash_map::Entry::Vacant(e) = register_mocks.entry(addr) {
@@ -530,6 +555,13 @@ impl Regmock {
     /// Get a copy of the recorded register accesses.
     pub fn get_logs(&self) -> RegmockLog {
         self.log.clone()
+    }
+
+    pub fn get_reg_name(&self, addr: usize) -> Option<&'static str> {
+        self.name_resolver
+            .as_ref()
+            .and_then(|r| r(addr as u64))
+            .copied()
     }
 }
 

@@ -196,6 +196,7 @@ dependencies = [
  "derive_builder",
  "itertools",
  "log",
+ "phf",
  "serde",
  "serde_json",
  "test-pac",
