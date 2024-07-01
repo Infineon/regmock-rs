@@ -5,6 +5,7 @@ use std::usize;
 
 use crate::utils::RegisterAccessType::*;
 use crate::utils::*;
+use crate::with_mock;
 use itertools::Diff;
 use itertools::Itertools;
 
@@ -33,7 +34,7 @@ impl MatchError {
 /// of register accesses.
 ///
 /// For an example of how to implement this trait see one of the existing matchers.
-/// (i.e. [`WrittenSequenceMatcher`])
+/// (i.e. [`ValuesWrittenAre`])
 pub trait LogMatcher<'log, T: IntoIterator<Item = &'log RegisterAccess>> {
     /// Consumes and matches `self` against some sequence of [`RegisterAccess`]'s.
     ///
@@ -60,20 +61,20 @@ pub trait LogMatcher<'log, T: IntoIterator<Item = &'log RegisterAccess>> {
 ///
 /// Apply matcher manually:
 /// ```rust,ignore
-/// let result = WrittenSequenceMatcher::new(peripheral_address, vec![0xA, 0xB, 0xC])
+/// let result = ValuesWrittenAre::new(peripheral_address, vec![0xA, 0xB, 0xC])
 ///     .r#match(crate::get_logs().iter());
 /// ```
 ///
-pub struct WrittenSequenceMatcher {
+pub struct ValuesWrittenAre {
     /// Address of the target register.
     address: usize,
     /// Sequence of values written to the targeted register.
     write_sequence: Vec<u64>,
 }
 
-impl WrittenSequenceMatcher {
-    const NAME: &'static str = "WrittenSequenceMatcher";
-    /// Construct a new [`WrittenSequenceMatcher`] for a given address.
+impl ValuesWrittenAre {
+    const NAME: &'static str = "ValuesWrittenAre";
+    /// Construct a new [`ValuesWrittenAre`] for a given address.
     pub fn new<T, I>(address: usize, write_sequence: I) -> Self
     where
         I: IntoIterator<Item = T>,
@@ -89,9 +90,7 @@ impl WrittenSequenceMatcher {
     }
 }
 
-impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
-    for WrittenSequenceMatcher
-{
+impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T> for ValuesWrittenAre {
     /// Verify that a given sequence of values was written to register.
     ///
     /// Will succeed if the values in [`self.write_sequence`] are written
@@ -110,6 +109,7 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
             .map(|m| m.after.unwrap())
             .collect();
 
+        let id = register_id(self.address);
         if let Some(diff) = itertools::diff_with(
             &actual_write_sequence,
             &self.write_sequence,
@@ -120,23 +120,20 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
                 match diff {
                     Diff::FirstMismatch(index, mut actual_rem, mut expected_rem) => {
                         format!(
-                        "Actual writes to 0x{:08X} differ from expected writes at index:{index} with actual: 0x{:08X} and expected: 0x{:08X}",
-                        self.address,
-                        expected_rem.next().unwrap(),
-                        actual_rem.next().unwrap()
-                    )
+                            "Actual writes to {id} differ from expected writes at index:{index} with actual: 0x{:08X} and expected: 0x{:08X}",
+                            actual_rem.next().unwrap(),
+                            expected_rem.next().unwrap()
+                        )
                     }
                     Diff::Shorter(iter_count, actual_rem) => {
                         format!(
-                        "Found more writes to 0x{:08X} than expected. Expected {iter_count} writes.\nValues of the surplus writes are:\n{}",
-                        self.address,
+                        "Found more writes to {id} than expected. Expected {iter_count} writes.\nValues of the surplus writes are:\n{}",
                         actual_rem.map(|a| format!("0x{:08X}",a)).collect_vec().join("\n")
                         )
                     }
                     Diff::Longer(iter_count, expected_rem) => {
                         format!(
-                        "Expected more writes to 0x{:08X}. Only {iter_count} elements were written.\nValues of the remaining expected writes are:\n{}",
-                        self.address,
+                        "Expected more writes to {id}. Only {iter_count} elements were written.\nValues of the remaining expected writes are:\n{}",
                         expected_rem.map(|e| format!("0X{:08X}",e)).collect_vec().join("\n")
                         )
                     }
@@ -153,15 +150,15 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
 /// Will succeed if at least one write to [`target`](#structfield.target) happened before the first
 /// write to [`other`](#structfield.other).
 /// Any additional writes do not affect the result. Reads are ignored.
-pub struct WrittenBeforeMatcher {
+pub struct WrittenToBeforeWriteTo {
     /// Address of the target register.
     pub target: usize,
     /// Address of the other register.
     pub other: usize,
 }
 
-impl WrittenBeforeMatcher {
-    const NAME: &'static str = "WrittenBeforeMatcher";
+impl WrittenToBeforeWriteTo {
+    const NAME: &'static str = "WrittenToBeforeWriteTo";
 
     pub fn new(target: usize, other: usize) -> Self {
         Self { target, other }
@@ -169,9 +166,9 @@ impl WrittenBeforeMatcher {
 }
 
 impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
-    for WrittenBeforeMatcher
+    for WrittenToBeforeWriteTo
 {
-    /// Match [`WrittenBeforeMatcher`] against log of [`RegisterAccess`]'s.
+    /// Match [`WrittenToBeforeWriteTo`] against log of [`RegisterAccess`]'s.
     fn r#match(self, log: T) -> Result<(), MatchError> {
         let mut filtered = log.into_iter().filter(|access| {
             access.ty.as_ref().is_some_and(|ty| *ty == WRITE)
@@ -181,23 +178,24 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
                     .is_some_and(|addr| addr == &self.target || addr == &self.other)
         });
 
+        let target_id = register_id(self.target);
+        let other_id = register_id(self.other);
         match filtered.next() {
             Some(access) => {
                 if access.addr.unwrap() == self.other {
-                    MatchError::error(Self::NAME, format!("Other register: 0x{:08X} was written to before target register: 0x{:08X}",self.other, self.target))
+                    MatchError::error(Self::NAME, format!("Other register: {other_id} was written to before target register: {target_id}"))
                 } else if filtered
                     .any(|access| access.addr.as_ref().is_some_and(|addr| addr == &self.other))
                 {
                     Ok(())
                 } else {
-                    MatchError::error(Self::NAME, format!("Other register: 0x{:08X} was not written to after write to target register: 0x{:08X}",self.other,self.target))
+                    MatchError::error(Self::NAME, format!("Other register: {other_id} was not written to after write to target register: {target_id}"))
                 }
             }
             None => MatchError::error(
                 Self::NAME,
                 format!(
-                    "No writes to target register: 0x{:08X} or other register: 0x{:08X} recorded",
-                    self.target, self.other,
+                    "No writes to target register: {target_id} or other register: {other_id} recorded"
                 ),
             ),
         }
@@ -208,26 +206,27 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
 ///
 /// Will succeed if **all** (0..n) writes to [`target`](#structfield.target) happened before the
 /// first write (0..1) to [`other`](#structfield.other).
-/// Other registers and reads are ignored.
-pub struct AllWrittenBeforeMatcher {
+/// Other registers and reads are ignored. Matcher succeeds if there are no writes to either
+/// register.
+pub struct AllWritesBeforeWritesTo {
     /// Register whose writes must **all** happen before writing [`other`](#structfield.other)
     pub target: usize,
     /// Register written to **after** all writes to [`target`](#structfield.target)
     pub other: usize,
 }
 
-impl AllWrittenBeforeMatcher {
-    const NAME: &'static str = "AllWrittenBeforeMatcher";
-    /// Construct new [`AllWrittenBeforeMatcher`]
+impl AllWritesBeforeWritesTo {
+    const NAME: &'static str = "AllWritesBeforeWritesTo";
+    /// Construct new [`AllWritesBeforeWritesTo`]
     pub fn new(target: usize, other: usize) -> Self {
         Self { target, other }
     }
 }
 
 impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
-    for AllWrittenBeforeMatcher
+    for AllWritesBeforeWritesTo
 {
-    /// Match [`AllWrittenBeforeMatcher`] against log of [`RegisterAccess`]'s.
+    /// Match [`AllWritesBeforeWritesTo`] against log of [`RegisterAccess`]'s.
     fn r#match(self, log: T) -> Result<(), MatchError> {
         let filtered = log.into_iter().filter(|access| {
             access.ty.as_ref().is_some_and(|ty| *ty == WRITE)
@@ -248,7 +247,9 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
         if all_written_before {
             Ok(())
         } else {
-            MatchError::error(Self::NAME,format!("Target register: 0x{:08X} was written to after write to other register: 0x{:08X}",self.target,self.other))
+            let target_id = register_id(self.target);
+            let other_id = register_id(self.other);
+            MatchError::error(Self::NAME,format!("Target register: {target_id} was written to after write to other register: {other_id}"))
         }
     }
 }
@@ -290,15 +291,15 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T>
             count => MatchError::error(
                 Self::NAME,
                 format!(
-                    "Register: 0x{:08X} was written to {} times",
-                    self.target, count
+                    "Register: {} was written to {count} times",
+                    register_id(self.target)
                 ),
             ),
         }
     }
 }
 
-/// Verify that register was **not**.
+/// Verify that register was **never** written.
 ///
 /// Will succeed [`self.target`](#structfield.target) is never written to.
 /// Reads are ignored.
@@ -333,8 +334,8 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T> for
             count => MatchError::error(
                 Self::NAME,
                 format!(
-                    "Register: 0x{:08X} was written to {} times",
-                    self.target, count
+                    "Register: {} was written to {count} times",
+                    register_id(self.target)
                 ),
             ),
         }
@@ -378,22 +379,22 @@ impl<'log, T: IntoIterator<Item = &'log RegisterAccess>> LogMatcher<'log, T> for
                     MatchError::error(
                         Self::NAME,
                         format!(
-                            "Last access to register: 0x{:08X} was: {:?}",
-                            self.target, access.ty
+                            "Last access to register: {} was: {:?}",
+                            register_id(self.target),
+                            access.ty
                         ),
                     )
                 }
             }
             None => MatchError::error(
                 Self::NAME,
-                format!("Register: 0x{:08X} was not accessed.", self.target),
+                format!("Register: {} was not accessed.", register_id(self.target)),
             ),
         }
     }
 }
 
-/// Verify a sequence of [`RegisterAccess`]'s
-/// happened.
+/// Verify a sequence of [`RegisterAccess`]'s happened.
 ///
 /// Will succeed if [`seq`](#structfield.seq) yields equal [`RegisterAccess`]'s
 /// as the provided log iterator. Fails is the iterators are not pairwise equal.
@@ -453,4 +454,14 @@ where
             Ok(())
         }
     }
+}
+
+/// Get name of register or stringified address if unknown
+fn register_id(address: usize) -> String {
+    with_mock(|m| {
+        m.get_reg_name(address)
+            .map(|n| n.to_owned())
+            .unwrap_or_else(|| format!("0x{:08x}", address))
+    })
+    .expect("Unable to get regmock instance")
 }
