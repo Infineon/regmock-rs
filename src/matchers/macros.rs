@@ -17,7 +17,7 @@
 /// given!(
 ///     log_iter,
 ///     require_reg!(
-///         pac::PERIPHERAL.register().addr(),
+///         pac::PERIPHERAL.register().unwrap().addr(),
 ///         written_once
 ///     )
 /// );
@@ -25,7 +25,7 @@
 ///
 /// Check that sequnece of values was written to register.
 /// ```rust,ignore
-/// let log_iter = regmock_rs::get_logs().iter();
+/// let log_iter = regmock_rs::get_logs().unwrap().iter();
 /// given!(
 ///     log_iter,
 ///     require_reg!(
@@ -34,7 +34,6 @@
 ///     )
 /// );
 /// ```
-
 #[macro_export]
 macro_rules! given {
     ($log: expr, $matcher: expr) => {{
@@ -76,38 +75,38 @@ macro_rules! given {
 /// with the value of `$target:expr` as target address.
 ///
 /// ## `all_written_before`
-/// Initializes a [`AllWrittenBeforeMatcher`](crate::matchers::AllWrittenBeforeMatcher)
+/// Initializes a [`AllWritesBeforeWritesTo`](crate::matchers::AllWritesBeforeWritesTo)
 /// with the value of `$target:expr` as target address and the value of
 /// `$other_address:expr` as the other address.
 ///
 /// ## `written_before`
-/// Initializes a [`WrittenBeforeMatcher`](crate::matchers::WrittenBeforeMatcher)
+/// Initializes a [`WrittenToBeforeWriteTo`](crate::matchers::WrittenToBeforeWriteTo)
 /// with the value of `$target:expr` as target address and the value of
 /// `$other_address:expr` as the other address.
 ///
-/// ## `written_sequence`
-/// Initializes a [`WrittenSequenceMatcher`](crate::matchers::WrittenSequenceMatcher)
+/// ## `values_written_are`
+/// Initializes a [`ValuesWrittenAre`](crate::matchers::ValuesWrittenAre)
 /// with the value of `$target:expr` as target address and the value of
 /// `$sequence:expr` as the sequence of written values.
 #[macro_export]
 macro_rules! require_reg {
     ($target:expr, read_last) => {
-        regmock_rs::matchers::ReadLastMatcher::new($target)
+        regmock_rs::matchers::ReadLastMatcher::new($target.addr())
     };
     ($target:expr, not_written) => {
-        regmock_rs::matchers::NotWrittenMatcher::new($target)
+        regmock_rs::matchers::NotWrittenMatcher::new($target.addr())
     };
     ($target:expr, written_once) => {
-        regmock_rs::matchers::WrittenOnceMatcher::new($target)
+        regmock_rs::matchers::WrittenOnceMatcher::new($target.addr())
     };
-    ($target:expr, all_written_before($other_address:expr)) => {
-        regmock_rs::matchers::AllWrittenBeforeMatcher::new($target, $other_address)
+    ($target:expr, all_writes_before_writes_to($other_address:expr)) => {
+        regmock_rs::matchers::AllWritesBeforeWritesTo::new($target.addr(), $other_address.addr())
     };
-    ($target:expr, written_before($other_address:expr)) => {
-        regmock_rs::matchers::WrittenBeforeMatcher::new($target, $other_address)
+    ($target:expr, written_to_before_write_to($other_address:expr)) => {
+        regmock_rs::matchers::WrittenToBeforeWriteTo::new($target.addr(), $other_address.addr())
     };
-    ($target:expr, written_sequence($sequence:expr)) => {
-        regmock_rs::matchers::WrittenSequenceMatcher::new($target, $sequence)
+    ($target:expr, values_written_are($sequence:expr)) => {
+        regmock_rs::matchers::ValuesWrittenAre::new($target.addr(), $sequence)
     };
 }
 
