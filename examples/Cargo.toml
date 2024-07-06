@@ -13,6 +13,9 @@ name = "regmock_examples"
 regmock-rs = { path = ".." }
 test-pac = { path = "../test-pac", features = ["all"] }
 
+[dev-dependencies]
+log = "0"
+
 [dev-dependencies.test-pac]
 path = "../test-pac"
 features = ["all", "tracing"]
