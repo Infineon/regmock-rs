@@ -17,6 +17,7 @@ pub fn spi_init(special_config: bool) {
     };
 }
 
+#[allow(clippy::bool_assert_comparison)]
 #[cfg(test)]
 mod tests {
     use regmock_rs::silent;
