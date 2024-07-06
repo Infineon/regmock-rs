@@ -5,4 +5,5 @@ pub mod _4_complex_order_of_effects;
 pub mod _5_sequence_match;
 pub mod _6_mocking_value_read_sequences_using_read_callback;
 pub mod _7_handling_polling_in_mocks;
+pub mod _8_model_behavior;
 pub mod common;
