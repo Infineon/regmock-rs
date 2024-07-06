@@ -529,3 +529,78 @@ mod values_written_to {
         }
     }
 }
+
+#[cfg(test)]
+mod given_short_forms {
+    use regmock_rs::{
+        require_seq,
+        utils::access_gen::{read_value, write_value},
+    };
+    use test_pac::{RegisterValue, SPI};
+
+    use super::*;
+
+    #[test]
+    pub fn full_log() {
+        init_mock(None);
+
+        unsafe {
+            let _ = SPI.status().read();
+            let _ = SPI.status().read();
+            SPI.ctrl().init(|r| r.set_raw(0x1234));
+
+            let r0 = read_value(SPI.status().addr(), 0);
+            let r1 = read_value(SPI.status().addr(), 0);
+            let w0 = write_value(SPI.ctrl().addr(), 0x1234);
+            given!(full_log, require_seq!(vec![&r0, &r1, &w0]));
+        }
+    }
+
+    #[test]
+    #[should_panic]
+    pub fn fail_full_log_skipping() {
+        init_mock(None);
+
+        unsafe {
+            let _ = SPI.status().read();
+            let _ = SPI.status().read();
+            SPI.ctrl().init(|r| r.set_raw(0x1234));
+
+            let r0 = read_value(SPI.status().addr(), 0);
+            let w0 = write_value(SPI.ctrl().addr(), 0x1234);
+            given!(full_log, require_seq!(vec![&r0, &w0]));
+        }
+    }
+
+    #[test]
+    pub fn skip_log() {
+        init_mock(None);
+
+        unsafe {
+            let _ = SPI.status().read();
+            let _ = SPI.status().read();
+            SPI.ctrl().init(|r| r.set_raw(0x1234));
+
+            let r0 = read_value(SPI.status().addr(), 0);
+            let w0 = write_value(SPI.ctrl().addr(), 0x1234);
+            given!(skip_log, require_seq!(vec![&r0, &w0]));
+        }
+    }
+
+    #[test]
+    #[should_panic]
+    pub fn fail_skip_log_not_skipping() {
+        init_mock(None);
+
+        unsafe {
+            let _ = SPI.status().read();
+            let _ = SPI.status().read();
+            SPI.ctrl().init(|r| r.set_raw(0x1234));
+
+            let r0 = read_value(SPI.status().addr(), 0);
+            let r1 = read_value(SPI.status().addr(), 0);
+            let w0 = write_value(SPI.ctrl().addr(), 0x1234);
+            given!(skip_log, require_seq!(vec![&r0, &r1, &w0]));
+        }
+    }
+}
