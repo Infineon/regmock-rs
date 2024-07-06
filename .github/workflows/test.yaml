@@ -36,3 +36,4 @@ jobs:
             target
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('Cargo.lock') }}
       - run: cargo test --verbose --all -- --nocapture
+      - run: cd examples && cargo test --verbose --all -- --nocapture
