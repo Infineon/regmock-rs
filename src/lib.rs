@@ -140,8 +140,9 @@ pub fn wait_until_polled(
         match with_mock(|mock| mock.log.is_being_polled(addr, count)).expect("Could not access regmock thread-local for setting logging state. Most likely your forgot to initialize regmock.") {
             true => return Ok(()),
             false if start.elapsed() > timeout => return Err(format!(
-                        "Timed out waiting for 0x{:08X} to be polled.",
-                        addr
+                        "Timed out waiting for 0x{:08X} to be polled. Last access: {:?}",
+                        addr,
+                        with_mock(|mock| mock.log.log.last().cloned())
                     )),
             _ => std::thread::yield_now(),
         };
