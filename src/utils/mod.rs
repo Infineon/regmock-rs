@@ -224,7 +224,7 @@ impl RegmockLog {
                     .ty
                     .as_ref()
                     .is_some_and(|ty| ty == &RegisterAccessType::READ)
-                && last.1 <= count
+                && last.1 > count
         })
     }
 
