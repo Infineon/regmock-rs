@@ -13,7 +13,7 @@ fn read_traced_correctly() {
     let read = unsafe { GPIO.we().read() };
     assert_eq!(read.get_raw(), 0);
 
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     assert_eq!(logs.len_full(), 1);
 
     let expected_access = RegisterAccess::new(RegisterAccessType::READ, GPIO.we().addr(), 4, 0, 0);
@@ -31,7 +31,7 @@ fn init_traced_correctly() {
 
     let w = RegisterAccess::new(RegisterAccessType::WRITE, GPIO.we().addr(), 4, 0, 0x100);
     let r = RegisterAccess::new(RegisterAccessType::READ, GPIO.we().addr(), 4, 0x100, 0x100);
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
 
     assert_eq!(logs.log, vec![(w.clone(), 1), (r.clone(), 1)]);
 
@@ -48,15 +48,12 @@ fn write_traced_correctly() {
         let new = current.gpio4().set(gpio::we::Gpio4::OUT);
         GPIO.we().write(new);
     };
-    assert_eq!(
-        silent(|| unsafe { GPIO.we().read() }).unwrap().get_raw(),
-        0x10
-    );
+    assert_eq!(silent(|| unsafe { GPIO.we().read() }).get_raw(), 0x10);
 
     let r = RegisterAccess::new(RegisterAccessType::READ, GPIO.we().addr(), 4, 0, 0);
     let w = RegisterAccess::new(RegisterAccessType::WRITE, GPIO.we().addr(), 4, 0, 0x10);
 
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     assert_eq!(logs.log, vec![(r.clone(), 1), (w.clone(), 1)]);
 
     given!(logs.iter_full(), require_seq!(vec![&r, &w])); // TODO ?
@@ -76,7 +73,7 @@ fn read_write_read_traced_correctly() {
     let r1 = RegisterAccess::new(RegisterAccessType::READ, GPIO.we().addr(), 4, 0, 0);
     let w1 = RegisterAccess::new(RegisterAccessType::WRITE, GPIO.we().addr(), 4, 0, 0x1);
     let r2 = RegisterAccess::new(RegisterAccessType::READ, GPIO.we().addr(), 4, 0x1, 0x1);
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     assert_eq!(
         logs.log,
         vec![(r1.clone(), 1), (w1.clone(), 1), (r2.clone(), 1)]
@@ -93,7 +90,7 @@ fn modify_traced_correctly() {
 
     let r = RegisterAccess::new(RegisterAccessType::READ, GPIO.we().addr(), 4, 0, 0);
     let w = RegisterAccess::new(RegisterAccessType::WRITE, GPIO.we().addr(), 4, 0, 0x10);
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     assert_eq!(logs.log, vec![(r.clone(), 1), (w.clone(), 1)]);
 
     given!(logs.iter_full(), require_seq!(vec![&r, &w])); // TODO ?
@@ -108,7 +105,7 @@ fn reads_rle_encoded() {
     }
 
     let r = RegisterAccess::new(RegisterAccessType::READ, GPIO.we().addr(), 4, 0, 0);
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     assert_eq!(logs.log, vec![(r.clone(), 5)]);
 
     assert_eq!(logs.iter().count(), 1); // TODO ?
@@ -126,7 +123,7 @@ fn read_and_write_not_combined_in_rle() {
 
     let r = RegisterAccess::new(RegisterAccessType::READ, GPIO.we().addr(), 4, 0, 0);
     let w = RegisterAccess::new(RegisterAccessType::WRITE, GPIO.we().addr(), 4, 0, 0x1);
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     assert_eq!(logs.log, vec![(r.clone(), 10), (w.clone(), 1)]);
 
     assert_eq!(logs.iter().count(), 2); // TODO ?
@@ -148,7 +145,7 @@ fn reads_of_different_register_not_combined_in_rle() {
 
     let r = RegisterAccess::new(RegisterAccessType::READ, GPIO.out().addr(), 4, 0, 0);
     let w = RegisterAccess::new(RegisterAccessType::READ, GPIO.we().addr(), 4, 0, 0);
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     assert_eq!(logs.log, vec![(r.clone(), 3), (w.clone(), 4)]);
 
     assert_eq!(logs.iter().count(), 2); // TODO ?
@@ -166,7 +163,7 @@ fn writes_not_combined_in_rle() {
 
     let state0 = RegisterAccess::new(RegisterAccessType::WRITE, GPIO.out().addr(), 4, 0, 1);
     let state1 = RegisterAccess::new(RegisterAccessType::WRITE, GPIO.out().addr(), 4, 1, 1);
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
 
     assert_eq!(
         logs.log,
@@ -203,7 +200,7 @@ fn reads_of_different_values_not_combined_in_rle() {
     let r1 = RegisterAccess::new(RegisterAccessType::READ, GPIO.out().addr(), 4, 1, 2);
     let r2 = RegisterAccess::new(RegisterAccessType::READ, GPIO.out().addr(), 4, 2, 3);
     let r3 = RegisterAccess::new(RegisterAccessType::READ, GPIO.out().addr(), 4, 3, 4);
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     assert_eq!(logs.log, vec![(r0, 1), (r1, 1), (r2, 1), (r3, 1)]);
 
     assert_eq!(logs.iter().count(), 4);
@@ -214,9 +211,9 @@ fn reads_of_different_values_not_combined_in_rle() {
 fn silent_access_not_traced() {
     init_mock(None);
 
-    silent(|| unsafe { GPIO.r#in().read() }).unwrap();
+    silent(|| unsafe { GPIO.r#in().read() });
     let _ = unsafe { GPIO.r#in().read() };
 
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     assert_eq!(logs.len_full(), 1);
 }
