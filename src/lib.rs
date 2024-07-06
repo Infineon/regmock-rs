@@ -1,6 +1,9 @@
 #![doc = include_str!("../README.md")]
 
-use std::sync::{Arc, Mutex, OnceLock};
+use std::{
+    sync::{Arc, Mutex, OnceLock},
+    time::Duration,
+};
 
 pub mod matchers;
 pub mod utils;
@@ -117,10 +120,11 @@ pub fn logging(state: bool) {
     .expect("Could not access regmock thread-local for setting logging state. Most likely your forgot to initialize regmock.")
 }
 
-/// Block until specific register is being polled or timeout.
+/// Block until specific register is being polled or timeout occurs.
 ///
 /// `count` specifies the number of consecutive reads to a register that should
 /// be considered polling.
+/// If no timeout is given, a default of 5 seconds is used.
 ///
 /// # Panics
 ///
@@ -130,11 +134,12 @@ pub fn wait_until_polled(
     count: usize,
     timeout: Option<std::time::Duration>,
 ) -> Result<(), String> {
+    let timeout = timeout.unwrap_or(Duration::from_secs(5));
     let start = std::time::Instant::now();
     loop {
         match with_mock(|mock| mock.log.is_being_polled(addr, count)).expect("Could not access regmock thread-local for setting logging state. Most likely your forgot to initialize regmock.") {
             true => return Ok(()),
-            false if timeout.is_some_and(|to| to < start.elapsed()) => return Err(format!(
+            false if start.elapsed() > timeout => return Err(format!(
                         "Timed out waiting for 0x{:08X} to be polled.",
                         addr
                     )),
