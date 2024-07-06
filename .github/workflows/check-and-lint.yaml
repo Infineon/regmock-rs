@@ -24,6 +24,7 @@ jobs:
           components: clippy
           override: true
       - run: cargo clippy --all-features -- -D warnings
+      - run: cd examples && cargo clippy --all-features -- -D warnings
 
   format:
     name: Check formatting
@@ -39,6 +40,7 @@ jobs:
           override: true
       - run: rustup component add rustfmt
       - run: cargo fmt --all -- --check
+      - run: cd examples && cargo fmt --all -- --check
 
   doc:
     name: Lint Documentation
