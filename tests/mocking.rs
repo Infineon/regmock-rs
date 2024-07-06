@@ -54,7 +54,7 @@ fn custom_read_fn() {
     assert_eq!(unsafe { GPIO.we().read().get_raw() }, 0xC0FFEE);
     assert_eq!(unsafe { GPIO.we().read().get_raw() }, 0xC0FFEE);
 
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     logs.iter_full()
         .for_each(|element| println!("{:X?}", element));
 
@@ -86,7 +86,7 @@ fn custom_write_fn() {
         }
     }
 
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     logs.iter().for_each(|element| println!("{:X?}", element));
     let last_read = RegisterAccessBuilder::default()
         .ty(RegisterAccessType::READ)
@@ -122,7 +122,7 @@ fn custom_advanced_write_fn() {
     assert_eq!(before, 0);
     assert_eq!(after, 0xC0FFEE);
 
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
     logs.iter().for_each(|element| println!("{:X?}", element));
     let r = read_value(GPIO.r#in().addr(), 0);
     let w = write_value(GPIO.out().addr(), 0x200);
@@ -177,7 +177,7 @@ fn test_boxed_callback_fnmut() {
         let _ = GPIO.we().read();
         let _ = GPIO.r#in().read();
     }
-    let logs = regmock_rs::logs().unwrap();
+    let logs = regmock_rs::logs();
 
     assert_eq!(logs.len_full(), 2);
     assert_eq!(*local_value.lock().unwrap(), 1);

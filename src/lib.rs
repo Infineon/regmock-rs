@@ -61,8 +61,7 @@ pub fn init_regmock(mock: Arc<Mutex<Regmock>>) {
 ///
 /// # Panics
 ///
-/// This function calls `panic!()` when the `thread_local` [`Regmock`] object
-/// cannot be accessed.
+/// Will panic if the thread-local [`Regmock`] object can't be accessed.
 ///
 /// # Examples
 ///
@@ -72,7 +71,7 @@ pub fn init_regmock(mock: Arc<Mutex<Regmock>>) {
 /// ```rust,ignore
 /// regmock_rs::silent(|| {
 ///     let _ = pac::REGISTER.bitfield().read();
-/// }).unwrap();
+/// });
 /// ```
 ///
 /// This function can be called recursively and will restore state.
@@ -83,35 +82,49 @@ pub fn init_regmock(mock: Arc<Mutex<Regmock>>) {
 ///     let val2 = pac::REGISTER.bitfield().read(); // logged, no callback
 ///     regmock_rs::silent(||{
 ///         pac::REGISTER.bitfield().write(val); // no log, no callback
-///     }).unwrap();
+///     });
 ///     pac::REGISTER.bitfield().write(val2); // logged, no callback
-/// }).unwrap();
+/// });
 /// ```
-pub fn silent<T>(f: impl FnOnce() -> T) -> Result<T, MockError> {
-    let mut state = (true, true);
-    with_mock(|regmock| {
-        state = (regmock.log_enabled, regmock.callback_enabled);
+pub fn silent<T>(f: impl FnOnce() -> T) -> T {
+    let prev_state = with_mock(|regmock| {
+        let state = (regmock.log_enabled, regmock.callback_enabled);
         regmock.log_enabled = false;
         regmock.callback_enabled = false;
-    })?;
+        state
+    })
+    .expect("Could not access regmock thread-local for silent access. Most likely you forgot to initialize regmock.");
+
     let ret = f();
+
     with_mock(|regmock| {
-        (regmock.log_enabled, regmock.callback_enabled) = state;
-    })?;
-    Ok(ret)
+        (regmock.log_enabled, regmock.callback_enabled) = prev_state;
+    })
+    .expect("Could not access regmock thread-local for silent access. Most likely your forgot to initialize regmock.");
+
+    ret
 }
 
 /// Enable/disable logging of register accesses in the `thread_local` MOCK object.
-pub fn logging(state: bool) -> Result<(), MockError> {
+///
+/// # Panics
+///
+/// Will panic if the thread-local [`Regmock`] object can't be accessed.
+pub fn logging(state: bool) {
     with_mock(|mock| {
         mock.log_enabled = state;
     })
+    .expect("Could not access regmock thread-local for setting logging state. Most likely your forgot to initialize regmock.")
 }
 
 /// Block until specific register is being polled or timeout.
 ///
 /// `count` specifies the number of consecutive reads to a register that should
 /// be considered polling.
+///
+/// # Panics
+///
+/// Will panic if the thread-local [`Regmock`] object can't be accessed.
 pub fn wait_until_polled(
     addr: usize,
     count: usize,
@@ -119,39 +132,36 @@ pub fn wait_until_polled(
 ) -> Result<(), String> {
     let start = std::time::Instant::now();
     loop {
-        match with_mock(|mock| mock.log.is_being_polled(addr, count)) {
-            Ok(polled) => {
-                if polled {
-                    break Ok(());
-                } else if timeout.is_some_and(|to| to < start.elapsed()) {
-                    break Err(format!(
+        match with_mock(|mock| mock.log.is_being_polled(addr, count)).expect("Could not access regmock thread-local for setting logging state. Most likely your forgot to initialize regmock.") {
+            true => return Ok(()),
+            false if timeout.is_some_and(|to| to < start.elapsed()) => return Err(format!(
                         "Timed out waiting for 0x{:08X} to be polled.",
                         addr
-                    ));
-                } else {
-                    std::thread::yield_now();
-                }
-            }
-            Err(e) => {
-                break Err(format!(
-                    "Failed to aquire thread_local mock due to: {:?}",
-                    e
-                ))
-            }
+                    )),
+            _ => std::thread::yield_now(),
         };
     }
 }
 
 /// Enable/disable the execution of callbacks in the `thread_local` MOCK object.
-pub fn callbacks(state: bool) -> Result<(), MockError> {
+///
+/// # Panics
+///
+/// Will panic if the thead-local, [`Regmock`] object can't be accessed.
+pub fn callbacks(state: bool) {
     with_mock(|mock| {
         mock.callback_enabled = state;
     })
+    .expect("Couldn't get regmock thread-local for setting callback state. Most likely your forgot to initialize regmock.")
 }
 
 /// Get the [`utils::RegmockLog`] form the `thread_local` MOCK object.
-pub fn logs() -> Result<utils::RegmockLog, MockError> {
-    with_mock(|mock| mock.get_logs())
+///
+/// # Panics
+///
+/// Will panic of the thread-local [`Regmock`] object can't be accessed.
+pub fn logs() -> utils::RegmockLog {
+    with_mock(|mock| mock.get_logs()).expect("Coudn't get regmock thead-local for getting logs. Most likely your forgot to initialize regmock.")
 }
 
 /// Perform a read from the mocked registers.
@@ -159,8 +169,7 @@ pub fn logs() -> Result<utils::RegmockLog, MockError> {
 ///
 /// # Panics
 ///
-/// This function calls `panic!()` if the `thead_local`, [`Regmock`] object
-/// cannot be accessed.
+/// Will panic if the thead-local, [`Regmock`] object can't be accessed.
 pub fn read_fn(reg: usize, len: usize) -> u64 {
     with_mock(|mock| mock.read_volatile(reg, len)).unwrap_or_else(|e| {
         panic!(

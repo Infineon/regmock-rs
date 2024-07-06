@@ -15,7 +15,7 @@ mod read_last {
             let _ = GPIO.we().read();
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), read_last)
             );
         }
@@ -30,7 +30,7 @@ mod read_last {
             let _ = GPIO.out().read();
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), read_last)
             );
         }
@@ -45,7 +45,7 @@ mod read_last {
             GPIO.out().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), read_last)
             );
         }
@@ -61,7 +61,7 @@ mod read_last {
             GPIO.we().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), read_last)
             );
         }
@@ -77,7 +77,7 @@ mod read_last {
         }
 
         given!(
-            regmock_rs::logs().unwrap().iter(),
+            regmock_rs::logs().iter(),
             require_reg!(GPIO.we(), read_last)
         );
     }
@@ -92,7 +92,7 @@ mod not_written {
         init_mock(None);
 
         given!(
-            regmock_rs::logs().unwrap().iter(),
+            regmock_rs::logs().iter(),
             require_reg!(GPIO.we(), not_written)
         );
     }
@@ -105,7 +105,7 @@ mod not_written {
             let _ = GPIO.we().read();
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), not_written)
             );
         }
@@ -119,7 +119,7 @@ mod not_written {
             GPIO.out().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), not_written)
             );
         }
@@ -134,7 +134,7 @@ mod not_written {
             GPIO.we().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), not_written)
             );
         }
@@ -153,7 +153,7 @@ mod written_once {
             GPIO.we().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), written_once)
             );
         }
@@ -169,7 +169,7 @@ mod written_once {
             let _ = GPIO.we().read();
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), written_once)
             );
         }
@@ -185,7 +185,7 @@ mod written_once {
             GPIO.out().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), written_once)
             );
         }
@@ -201,7 +201,7 @@ mod written_once {
             GPIO.out().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), written_once)
             );
         }
@@ -218,7 +218,7 @@ mod written_once {
             GPIO.we().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), written_once)
             );
         }
@@ -235,7 +235,7 @@ mod written_once {
             GPIO.we().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), written_once)
             );
         }
@@ -256,7 +256,7 @@ mod all_writes_before_writes_to {
             GPIO.we().init(|r| r);
             GPIO.out().init(|r| r);
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(GPIO.we(), all_writes_before_writes_to(GPIO.out()))
             );
         }
@@ -274,7 +274,7 @@ mod all_writes_before_writes_to {
             SPI.ctrl().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.tx(), all_writes_before_writes_to(SPI.status()))
             );
         }
@@ -290,7 +290,7 @@ mod all_writes_before_writes_to {
             let _ = SPI.ctrl().read();
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), all_writes_before_writes_to(SPI.tx()))
             );
         }
@@ -307,7 +307,7 @@ mod all_writes_before_writes_to {
             SPI.ctrl().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), all_writes_before_writes_to(SPI.tx()))
             );
         }
@@ -324,7 +324,7 @@ mod all_writes_before_writes_to {
             SPI.ctrl().modify(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), all_writes_before_writes_to(SPI.tx()))
             );
         }
@@ -346,7 +346,7 @@ mod written_before {
             SPI.tx().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), written_to_before_write_to(SPI.tx()))
             );
         }
@@ -364,7 +364,7 @@ mod written_before {
             SPI.ctrl().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), written_to_before_write_to(SPI.tx()))
             );
         }
@@ -380,7 +380,7 @@ mod written_before {
             SPI.ctrl().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), written_to_before_write_to(SPI.tx()))
             );
         }
@@ -395,7 +395,7 @@ mod written_before {
             SPI.tx().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), written_to_before_write_to(SPI.tx()))
             );
         }
@@ -411,7 +411,7 @@ mod written_before {
             SPI.tx().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), written_to_before_write_to(SPI.tx()))
             );
         }
@@ -434,7 +434,7 @@ mod values_written_to {
             SPI.ctrl().init(|r| r.cpol().set(true));
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), values_written_are([0x0u8, 0x4u8]))
             );
         }
@@ -453,7 +453,7 @@ mod values_written_to {
             SPI.rx().init(|r| r);
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), values_written_are([0x0u8, 0x4u8]))
             );
         }
@@ -472,7 +472,7 @@ mod values_written_to {
             let _ = SPI.ctrl().read();
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), values_written_are([0x0u8, 0x4u8]))
             );
         }
@@ -489,7 +489,7 @@ mod values_written_to {
             SPI.ctrl().init(|r| r.cpol().set(true));
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), values_written_are([0x0u8, 0x4u8]))
             );
         }
@@ -505,7 +505,7 @@ mod values_written_to {
                 .init(|r| r.cpha().set(spi::ctrl::Cpha::CPHA_FIRST_SHIFTS));
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), values_written_are([0x0u8, 0x4u8]))
             );
         }
@@ -523,7 +523,7 @@ mod values_written_to {
             SPI.ctrl().init(|r| r.cpol().set(true));
 
             given!(
-                regmock_rs::logs().unwrap().iter(),
+                regmock_rs::logs().iter(),
                 require_reg!(SPI.ctrl(), values_written_are([0x0u8, 0x4u8]))
             );
         }

@@ -34,7 +34,7 @@ fn test_wait_until_polling() -> Result<(), String> {
         #[allow(unused_imports)]
         use pac::tracing::insanely_unsafe;
         GPIO.r#in().write_read_only(gpio::In::new(0xC0FFEE))
-    })?;
+    });
 
     dut_thread
         .join()
@@ -66,7 +66,7 @@ fn test_wait_until_polling_fail() -> Result<(), String> {
     assert!(result.unwrap_err().contains("Timed out"));
 
     // set register so that thread will exit gracefully
-    regmock_rs::silent(|| unsafe { GPIO.we().write(gpio::We::new(0xC0FFEE)) })?;
+    regmock_rs::silent(|| unsafe { GPIO.we().write(gpio::We::new(0xC0FFEE)) });
 
     dut_thread
         .join()
