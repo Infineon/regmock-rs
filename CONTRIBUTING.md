@@ -9,7 +9,7 @@ Thank you for your interest in contributing to our project! Please take a moment
 3. Create a new branch for your features or bug fixes
 4. Make the changes to your branch
 5. Run all available tests to ensure that your changes do not break the existing functionality
-6. run `cargo fmt`
+6. run `cargo fmt` & fix warnings from `cargo clippy`
 7. Push your changes to your forked repository
 8. Submit a pull request to the original repository
 
