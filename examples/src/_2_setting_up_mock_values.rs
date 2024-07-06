@@ -4,24 +4,32 @@ use test_pac as pac;
 pub mod dut {
     use super::*;
 
+    /// Return whether some output pin is driven high
     pub fn is_output_high() -> bool {
         unsafe { GPIO.out().read().gpio0().get() }
     }
 
+    /// Return whether some input pin is high
     pub fn is_input_high() -> bool {
         unsafe { GPIO.r#in().read().gpio0().get() }
     }
+
+    // Note: since there is no mocking going on here, there
+    // is also no relationship between the input and output
+    // state as it would be with real hardware. All 'registers'
+    // are independent until we mock their behavior.
 }
 
 #[allow(clippy::bool_assert_comparison)]
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use crate::common::init_mock;
     use regmock_rs::silent;
     use test_pac::{gpio, RegisterValue};
 
-    use super::*;
-    use crate::common::init_mock;
-
+    /// Show how to provide a mock value for a register before
+    /// calling the DUT
     #[test]
     fn single_value() {
         init_mock(None);
@@ -37,6 +45,8 @@ mod tests {
         assert_eq!(dut::is_output_high(), true);
     }
 
+    /// Show how setting a mock value works if the register
+    /// itself it read-only
     #[allow(unused_imports)] // incorrectly flags `insanely_unsafe` import below
     #[test]
     fn single_value_in_ro_register() {
@@ -48,7 +58,7 @@ mod tests {
         init_mock(None);
 
         // since `in` is a read-only register, the normal approach of using `init` or `modify`
-        // would not work as those functions would not be available
+        // would not work as those functions would not be available.
         // `write_read_only` is the workaround for this
         silent(|| unsafe { GPIO.r#in().write_read_only(gpio::In::new(0x11u32)) });
 
