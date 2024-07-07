@@ -28,6 +28,13 @@ mod tests {
     /// being false.
     /// Afterwards we expect that the DUT reads the available data byte
     /// from rx::data.
+    /// We start the DUT on a thread - that allows for some interactivity without
+    /// writing any callbacks / complex models.
+    ///
+    /// Alternative ways of handling polling would be:
+    /// - use read callbacks / more complex model for the behavior
+    /// - if you don't need to check that polling happens in a testcase,
+    ///   just pre-set the polled value
     #[test]
     fn run_dut_in_thread() {
         let regmock = init_mock(None);
