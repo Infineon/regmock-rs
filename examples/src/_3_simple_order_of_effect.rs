@@ -47,8 +47,13 @@ mod tests {
         // register values to a different value
         assert_eq!(silent(|| unsafe { SPI.status().read() }).get_raw(), 0);
         assert_eq!(silent(|| unsafe { SPI.ctrl().read() }).en().get(), true);
+
         // use the log to ensure that the enable was written after the status
         // was cleared.
+        // `given!` and `require_reg` are regmock utilities to make more complex
+        // but commonly used checks simple to do. `given!` acts as an assertion
+        // macro while `require_reg!` helps to prepare the matchers that implement
+        // those checks.
         given!(
             regmock_rs::logs().iter(),
             require_reg!(SPI.status(), all_writes_before_writes_to(SPI.ctrl()))
