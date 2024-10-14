@@ -3,11 +3,12 @@ version = "0.1.0"
 name = "regmock-rs"
 edition = "2021"
 authors = ["Andreas Wallner", "Andreas Botzner"]
-description = "Rust implementation of regmock for pacgen PACs."
+description = "Register mocking library to allow host unittests of embedded software, build on svd2pac."
 license = "MIT"
 keywords = ["embedded", "testing", "unittest"]
 categories = ["development-tools::testing", "embedded"]
 readme = "README.md"
+homepage = "https://github.com/infineon/regmock-rs"
 repository = "https://github.com/infineon/regmock-rs"
 
 [lib]
