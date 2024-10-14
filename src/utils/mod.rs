@@ -444,6 +444,7 @@ pub struct Regmock {
     /// - a mutable reference to the [`register_mocks`](#register_mocks) member
     /// - the value of the register before the write.
     /// - the value that should be written to the register.
+    ///
     /// The value returned from this function is treated as the value that
     /// is written to the register.
     ///

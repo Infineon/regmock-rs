@@ -1,8 +1,6 @@
 //! Collection of matchers that can be run against
 //! iterators that yield [`RegisterAccess`].
 
-use std::usize;
-
 use crate::utils::RegisterAccessType::*;
 use crate::utils::*;
 use crate::with_mock;
