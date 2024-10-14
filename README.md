@@ -101,3 +101,5 @@ components please refer to the cargo generated documentation by running
 ```bash
 cargo doc --open
 ```
+
+A range of example with different complexity can be found in the `examples`.
