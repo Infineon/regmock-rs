@@ -26,6 +26,9 @@ pub enum RegisterAccessType {
 /// [`PartialEq`](#impl-PartialEq%3CRegisterAccess%3E-for-RegisterAccess)
 /// implementation for more details and specific examples.
 ///
+/// See the convenience functions [`access_gen::read`], [`access_gen::read_value`],
+/// [`access_gen::write`] and [`access_gen::write_value`] for a shorthand ways to
+/// construct `RegisterAccess` structs.
 #[derive(Default, Clone, Eq, Builder, Deserialize)]
 #[builder(default)]
 #[serde(default)]
@@ -90,7 +93,6 @@ impl Debug for RegisterAccess {
 /// let mut partial = RegisterAccess::default();
 /// partial.ty = Some(RegisterAccessType::READ);
 /// assert_eq!(partial, full);
-///
 /// ```
 impl PartialEq for RegisterAccess {
     fn eq(&self, other: &Self) -> bool {
@@ -116,6 +118,10 @@ impl PartialEq for RegisterAccess {
 
 impl RegisterAccess {
     /// Constructor for `RegisterAccess` that takes all its members as arguments.
+    ///
+    /// See also the shorthand constructors [`access_gen::read`], [`access_gen::read_value`],
+    /// [`access_gen::write`] and [`access_gen::write_value`] for constructing partial
+    /// `RegisterAccess` structs.
     pub fn new(ty: RegisterAccessType, addr: usize, len: usize, before: u64, after: u64) -> Self {
         Self {
             ty: Some(ty),
@@ -576,7 +582,7 @@ impl Regmock {
     /// pac::tracing::set_read_fn(regmock_rs::read_fn).unwrap();
     /// ```
     /// To register the function with the PAC library. Consult the documentation
-    /// of you specific PAC for more information.
+    /// of your specific PAC for more information.
     pub fn read_volatile(&mut self, addr: usize, len: usize) -> u64 {
         let before = self.get_reg_value(addr);
         let after = self.exec_read_fn(addr, before);
@@ -604,7 +610,7 @@ impl Regmock {
     /// pac::tracing::set_write_fn(regmock_rs::write_fn).unwrap();
     /// ```
     /// To register the function with the PAC library. Consult the documentation
-    /// of you specific PAC for more information.
+    /// of your specific PAC for more information.
     pub fn write_volatile(&mut self, addr: usize, len: usize, val: u64) {
         let before = self.get_reg_value(addr);
         let after = self.exec_write_fn(addr, before, val);

@@ -10,9 +10,10 @@ pub mod utils;
 use crate::utils::Regmock;
 
 thread_local! {
+    #[allow(clippy::missing_const_for_thread_local)]
     /// Global Regmock object used by `read_fn`,`write_fn` and `ldmst_fn`
     /// to mock registers and chip behavior.
-    pub(crate) static  MOCK: ThreadLocalRegmock= const {OnceLock::new()};
+    pub(crate) static  MOCK: ThreadLocalRegmock = const {OnceLock::new()};
 }
 
 type ThreadLocalRegmock = OnceLock<Arc<Mutex<Regmock>>>;
@@ -33,7 +34,7 @@ impl From<MockError> for String {
 }
 
 /// Execute function against `thread_local` [`Regmock`] object.
-pub(crate) fn with_mock<F, R>(f: F) -> Result<R, MockError>
+pub fn with_mock<F, R>(f: F) -> Result<R, MockError>
 where
     F: FnOnce(&mut Regmock) -> R,
 {
