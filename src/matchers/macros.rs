@@ -15,7 +15,7 @@
 ///
 /// # Examples
 ///
-/// Best used together with the [`require_reg!`] and [`require_seq!`] macros to construct the
+/// Best used together with the `require_reg!` and `require_seq!` macros to construct the
 /// [`LogMatcher`](crate::matchers::LogMatcher)s.
 ///
 /// Check that register was written to only once.
@@ -172,7 +172,8 @@ macro_rules! require_reg {
 
 /// Macro for constructing a [`LogSequenceMatcher`](crate::matchers::LogSequenceMatcher)
 /// struct in a "more prose like" manner.
-/// Works together well with the [`read_access`] and [`write_access`] helpers.
+/// Works together well with e.g. the [`crate::utils::access_gen::read_value`] and
+/// [`crate::utils::access_gen::write_value`] helpers (and cousins).
 ///
 /// # Example
 ///

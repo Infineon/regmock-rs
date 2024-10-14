@@ -77,6 +77,7 @@ pub mod model {
     // case because we never directly access the model thread-local, only through
     // boxed callback functions that we register
     thread_local! {
+        #[allow(clippy::missing_const_for_thread_local)]
         pub static SPI_MODEL: OnceLock<RefCell<SpiModel>> = const { OnceLock::new() };
     }
 

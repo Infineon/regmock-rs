@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
-use std::usize;
 
 use pac::{gpio, RegisterValue, GPIO};
 use regmock_rs::utils::access_gen::{read_value, write_value};
